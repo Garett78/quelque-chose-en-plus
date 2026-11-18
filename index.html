@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quelque Chose en Plus</title>
+<meta name="description" content="Communication Oui / Non par le regard pour les jeunes accompagnés.">
+<meta name="theme-color" content="#0f1a24">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-180.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ============ ACCUEIL ============ -->
+<section id="home" class="screen">
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" width="44" height="44">
+      <div>
+        <h1>Quelque Chose en Plus</h1>
+        <button class="who" id="btnWho" type="button">Jeune : <strong id="whoName"></strong> ▾</button>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnEdit" type="button">Modifier la bibliothèque</button>
+      <button class="btn" id="btnSettings" type="button">Réglages</button>
+    </div>
+  </header>
+  <p class="banner" id="installBanner" hidden>
+    <span>Installe l'application sur ton téléphone pour l'ouvrir comme les autres applis, même sans internet.</span>
+    <button class="btn primary" id="btnInstall" type="button">Installer</button>
+  </p>
+  <p class="hint" id="editHint" hidden>Mode modification : touche une carte pour changer son nom, sa question ou son image.</p>
+  <div class="grid" id="grid"></div>
+  <p class="hint" id="modeHint"></p>
+</section>
+
+<!-- ============ QUESTION ============ -->
+<section id="ask" class="screen" hidden>
+  <div class="askbar">
+    <button class="btn" id="btnBack" type="button">← Bibliothèque</button>
+    <span class="spacer"></span>
+    <button class="btn" id="btnRepeat" type="button">Répéter</button>
+    <button class="btn" id="btnCalib" type="button">Calibrer le regard</button>
+  </div>
+  <div class="question" id="qText"></div>
+  <div class="choices" id="choices">
+    <button class="choice oui" id="cOui" type="button" aria-label="Oui"><span class="square"><span class="fill"></span></span><span class="word">OUI</span></button>
+    <button class="choice non" id="cNon" type="button" aria-label="Non"><span class="square"><span class="fill"></span></span><span class="word">NON</span></button>
+  </div>
+  <div class="cam" id="cam" hidden>
+    <video id="video" playsinline muted></video>
+    <div class="gbar" aria-hidden="true"><div class="gdot" id="gdot"></div></div>
+    <div class="status" id="status">Caméra arrêtée</div>
+  </div>
+  <div class="panel" id="calibPanel" hidden>
+    <p id="calibText"></p>
+    <div class="row">
+      <button class="btn primary" id="calGo" type="button">Enregistrer</button>
+      <button class="btn ghost" id="calCancel" type="button">Plus tard</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARTE (ajout / modification) ============ -->
+<div class="overlay" id="cardSheet" hidden>
+  <form class="sheet" id="cardForm">
+    <h2 id="cardTitle">Nouvelle image</h2>
+    <div class="photoEdit">
+      <div class="preview" id="cardPreview"></div>
+      <div class="col">
+        <button class="btn" type="button" id="btnTakePhoto">Prendre une photo</button>
+        <button class="btn" type="button" id="btnPickPhoto">Choisir dans la galerie</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fLabel">Mot affiché</label>
+      <input type="text" id="fLabel" placeholder="Ex. : Bain" required maxlength="30">
+    </div>
+    <div class="field">
+      <label for="fQ">Question lue à voix haute</label>
+      <input type="text" id="fQ" placeholder="Ex. : Tu veux prendre ton bain ?" maxlength="90">
+      <small>Si tu laisses vide, l'application lira le mot suivi d'un point d'interrogation.</small>
+    </div>
+    <div class="row">
+      <button class="btn primary" type="submit" id="cardSave">Enregistrer</button>
+      <button class="btn ghost" type="button" id="cardCancel">Annuler</button>
+      <span class="spacer"></span>
+      <button class="btn danger" type="button" id="cardDelete" hidden>Supprimer</button>
+    </div>
+    <p class="confirm" id="cardConfirm" hidden>
+      <span>Supprimer cette image de la bibliothèque ?</span>
+      <button class="btn danger" type="button" id="cardDeleteYes">Oui, supprimer</button>
+      <button class="btn ghost" type="button" id="cardDeleteNo">Non</button>
+    </p>
+  </form>
+</div>
+
+<!-- ============ CHOIX DU JEUNE ============ -->
+<div class="overlay" id="whoSheet" hidden>
+  <div class="sheet">
+    <h2>Quel jeune ?</h2>
+    <p class="hint">Chaque jeune garde son propre calibrage du regard et ses propres réglages.</p>
+    <div class="list" id="whoList"></div>
+    <form class="row" id="whoAdd">
+      <input type="text" id="whoNew" placeholder="Prénom du jeune" maxlength="24" aria-label="Prénom du jeune">
+      <button class="btn primary" type="submit">Ajouter</button>
+    </form>
+    <button class="btn ghost" type="button" id="whoClose">Fermer</button>
+  </div>
+</div>
+
+<!-- ============ RÉGLAGES ============ -->
+<div class="overlay" id="settingsSheet" hidden>
+  <div class="sheet">
+    <h2>Réglages pour <span id="setWho"></span></h2>
+    <div class="field">
+      <span class="legend">Comment le jeune répond</span>
+      <div class="seg">
+        <label><input type="radio" name="mode" id="mRegard" value="regard"><span>Avec le regard</span></label>
+        <label><input type="radio" name="mode" id="mToucher" value="toucher"><span>En touchant</span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="dwell">Temps de regard pour valider : <span class="val" id="dwellVal"></span></label>
+      <input type="range" id="dwell" min="1" max="5" step="0.5">
+      <small>Plus long = moins de réponses par erreur, mais plus fatigant.</small>
+    </div>
+    <div class="field">
+      <label for="sens">Sensibilité du regard : <span class="val" id="sensVal"></span></label>
+      <input type="range" id="sens" min="1" max="5" step="1">
+      <small>Augmente si le jeune bouge peu les yeux. Diminue s'il y a des réponses par erreur.</small>
+    </div>
+    <div class="field">
+      <span class="legend">Côté des réponses</span>
+      <div class="seg">
+        <label><input type="radio" name="side" id="sideOuiLeft" value="left"><span>OUI à gauche</span></label>
+        <label><input type="radio" name="side" id="sideOuiRight" value="right"><span>OUI à droite</span></label>
+      </div>
+    </div>
+    <p class="hint" id="calibInfo"></p>
+
+    <h3>Voix et sons</h3>
+    <label class="check"><input type="checkbox" id="voice">Voix activée</label>
+    <label class="check"><input type="checkbox" id="sayQ">Lire la question en ouvrant une image</label>
+    <label class="check"><input type="checkbox" id="sayWord">Dire le mot avec la réponse (« Oui, boire »)</label>
+    <div class="rec">
+      <span class="legend">Voix enregistrée pour OUI et NON</span>
+      <small>Par défaut, la voix du téléphone dit « Oui » ou « Non ». Tu peux enregistrer ta propre voix ou celle d'un collègue.</small>
+      <div class="recRow" data-k="oui"><span class="tag oui">OUI</span><button class="btn" type="button" data-act="rec">Enregistrer</button><button class="btn ghost" type="button" data-act="play">Écouter</button><button class="btn ghost" type="button" data-act="del">Effacer</button></div>
+      <div class="recRow" data-k="non"><span class="tag non">NON</span><button class="btn" type="button" data-act="rec">Enregistrer</button><button class="btn ghost" type="button" data-act="play">Écouter</button><button class="btn ghost" type="button" data-act="del">Effacer</button></div>
+      <small id="recStatus"></small>
+    </div>
+
+    <h3>Le jeune</h3>
+    <div class="row">
+      <button class="btn" type="button" id="btnRename">Renommer</button>
+      <button class="btn danger" type="button" id="btnDelWho">Supprimer ce jeune</button>
+    </div>
+    <p class="confirm" id="whoConfirm" hidden>
+      <span>Supprimer <strong id="whoConfirmName"></strong> et son calibrage ?</span>
+      <button class="btn danger" type="button" id="whoDelYes">Oui, supprimer</button>
+      <button class="btn ghost" type="button" id="whoDelNo">Non</button>
+    </p>
+    <form class="row" id="renameForm" hidden>
+      <input type="text" id="renameInput" maxlength="24" aria-label="Nouveau prénom">
+      <button class="btn primary" type="submit">Valider</button>
+    </form>
+
+    <p class="hint">Tout reste sur ce téléphone : aucune image de la caméra n'est enregistrée ni envoyée.</p>
+    <button class="btn primary" type="button" id="sClose">Fermer</button>
+  </div>
+</div>
+
+<input type="file" id="filePick" accept="image/*" hidden>
+<input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+
+<script src="mediapipe/face_mesh.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

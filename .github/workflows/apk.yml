@@ -1,0 +1,50 @@
+name: Construire l'application Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Copier l'application dans le projet Android
+        run: |
+          mkdir -p android/app/src/main/assets/www
+          cp -r index.html app.css app.js manifest.webmanifest images icons fonts mediapipe android/app/src/main/assets/www/
+
+      - name: Fabriquer l'APK
+        run: gradle -p android assembleDebug --no-daemon
+
+      - name: Renommer l'APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk QuelqueChoseEnPlus.apk
+
+      - name: Garder l'APK dans l'onglet Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuelqueChoseEnPlus
+          path: QuelqueChoseEnPlus.apk
+
+      - name: Publier l'APK dans les Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Quelque Chose en Plus (version ${{ github.run_number }})
+          body: Télécharge le fichier QuelqueChoseEnPlus.apk ci-dessous depuis ton téléphone pour installer l'application.
+          files: QuelqueChoseEnPlus.apk
+          make_latest: true
