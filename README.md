@@ -1,6 +1,6 @@
-# Quelque Chose en Plus
+# Heureux Qui Communique
 
-Application de communication Oui / Non par le regard pour les jeunes accompagnés.
+Communication Oui / Non, jeux et apprentissages par le regard pour les jeunes polyhandicapés.
 
 - `index.html`, `app.js`, `app.css`, `images/`… : l'application
 - `android/` : le projet Android qui fabrique l'APK (les fichiers de l'application sont copiés dans `android/app/src/main/assets/www` avant la compilation)
@@ -13,3 +13,5 @@ cp -r index.html app.css core.js comm.js games.js learn.js main.js manifest.webm
 gradle -p android assembleDebug
 ```
 L'APK se trouve ensuite dans `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+© 2026 Nawafale REZGUI – Éducs Clés Formations. Tous droits réservés.

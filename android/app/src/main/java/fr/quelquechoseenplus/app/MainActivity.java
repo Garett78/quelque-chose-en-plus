@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Quelque Chose en Plus : l'application web (dossier assets/www) affichée en plein écran,
+ * Heureux Qui Communique (© 2026 Nawafale REZGUI – Éducs Clés Formations) : l'application web (dossier assets/www) affichée en plein écran,
  * avec la caméra, le micro, la voix du téléphone et l'ajout de photos.
  */
 public class MainActivity extends Activity {

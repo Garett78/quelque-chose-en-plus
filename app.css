@@ -212,6 +212,18 @@ input[type=color]{width:90px;height:56px;border:1px solid var(--line);border-rad
 .tag.non{background:var(--non)}
 .recRow .btn.recording{background:var(--non);color:#fff}
 
+/* ---------- Copyright et À propos ---------- */
+.credit{margin-top:auto;display:flex;justify-content:center;padding-top:8px}
+.creditBtn{display:inline-flex;align-items:center;gap:10px;background:none;border:0;color:var(--muted);font-size:.85rem;padding:6px;text-align:left}
+.creditBtn img{border-radius:8px;background:#fff;flex:none}
+.about{align-items:center;text-align:center}
+.about p{margin:0}
+.aboutLogo{width:min(220px,60vw);height:auto;border-radius:16px;background:#fff}
+.aboutBy{font-size:1.05rem}
+.aboutCopy{color:var(--muted);font-size:.9rem}
+.about details{align-self:stretch;text-align:left;color:var(--muted);font-size:.85rem;background:var(--bg);border-radius:10px;padding:10px}
+.about summary{cursor:pointer;font-weight:700;color:var(--fg)}
+
 /* Téléphone à l'horizontale : fenêtre caméra plus petite pour ne pas cacher le jeu */
 @media (max-height:520px){
   .cam{width:108px;padding:4px;gap:4px;font-size:.7rem}

@@ -1,4 +1,4 @@
-QUELQUE CHOSE EN PLUS
+HEUREUX QUI COMMUNIQUE
 Communication, jeux et apprentissages par le regard.
 
 Ce dossier contient :
@@ -10,3 +10,5 @@ Ce dossier contient :
 Pour changer une image par défaut de « Communiquer » : remplace le fichier du même nom dans le dossier images
 (toilettes.jpg, boire.jpg, manger.jpg, repos.jpg, change.jpg, cour.jpg) puis envoie-le sur GitHub.
 Un nouvel APK est fabriqué à chaque modification.
+
+© 2026 Nawafale REZGUI – Éducs Clés Formations. Tous droits réservés.

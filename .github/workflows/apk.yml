@@ -32,19 +32,19 @@ jobs:
         run: gradle -p android assembleDebug --no-daemon
 
       - name: Renommer l'APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk QuelqueChoseEnPlus.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk HeureuxQuiCommunique.apk
 
       - name: Garder l'APK dans l'onglet Actions
         uses: actions/upload-artifact@v4
         with:
-          name: QuelqueChoseEnPlus
-          path: QuelqueChoseEnPlus.apk
+          name: HeureuxQuiCommunique
+          path: HeureuxQuiCommunique.apk
 
       - name: Publier l'APK dans les Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: Quelque Chose en Plus (version ${{ github.run_number }})
-          body: Télécharge le fichier QuelqueChoseEnPlus.apk ci-dessous depuis ton téléphone pour installer l'application.
-          files: QuelqueChoseEnPlus.apk
+          name: Heureux Qui Communique (version ${{ github.run_number }})
+          body: Télécharge le fichier HeureuxQuiCommunique.apk ci-dessous depuis ton téléphone pour installer l'application.
+          files: HeureuxQuiCommunique.apk
           make_latest: true

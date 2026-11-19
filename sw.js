@@ -1,5 +1,5 @@
-/* Garde l'application sur le téléphone pour qu'elle marche sans internet. */
-const VERSION = 'qcep-v3';
+/* Heureux Qui Communique : garde l'application sur le téléphone pour qu'elle marche sans internet. */
+const VERSION = 'qcep-v4';
 const FILES = [
   "./",
   "app.css",
@@ -19,6 +19,7 @@ const FILES = [
   "images/boire.jpg",
   "images/change.jpg",
   "images/cour.jpg",
+  "images/logo.jpg",
   "images/manger.jpg",
   "images/repos.jpg",
   "images/toilettes.jpg",

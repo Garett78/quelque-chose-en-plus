@@ -17,7 +17,7 @@
     </queries>
 
     <application
-        android:label="Quelque Chose en Plus"
+        android:label="Heureux Qui Communique"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@android:style/Theme.Material.NoActionBar"

@@ -1,4 +1,4 @@
-/* Quelque Chose en Plus : socle commun (stockage, jeunes, voix, sons, écrans, suivi du regard, calibrage).
+/* Heureux Qui Communique (© 2026 Nawafale REZGUI – Éducs Clés Formations) : socle commun (stockage, jeunes, voix, sons, écrans, suivi du regard, calibrage).
    Tout fonctionne sur le téléphone, sans internet. */
 'use strict';
 const $ = s => document.querySelector(s);
@@ -518,6 +518,8 @@ function saveSettings(){
   if (oldMode !== p.mode) Gaze.refresh();
 }
 ['mRegard','mToucher','dwell','sens','sideOuiLeft','sideOuiRight','nch2','nch3','vol1','vol2','vol3','voice','sayQ','sayWord'].forEach(id => $('#' + id).addEventListener('input', saveSettings));
+$('#btnAbout').onclick = () => openOverlay('#aboutSheet');
+$('#btnAbout2').onclick = () => openOverlay('#aboutSheet');
 $('#btnSettings').onclick = () => { syncSettings(); $('#whoConfirm').hidden = true; $('#renameForm').hidden = true; openOverlay('#settingsSheet'); };
 $('#settingsSheet').onclose = () => stopRec();
 $('#btnRename').onclick = () => { $('#renameInput').value = App.prof().name; $('#renameForm').hidden = false; $('#renameInput').focus(); };
