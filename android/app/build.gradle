@@ -10,8 +10,25 @@ android {
         applicationId 'fr.quelquechoseenplus.app'
         minSdk 24
         targetSdk 34
-        versionCode 3
-        versionName '3.0'
+        versionCode 4
+        versionName '3.1'
+    }
+
+    // Clé de signature fixe : chaque nouvelle version s'installe par-dessus la précédente.
+    signingConfigs {
+        fixe {
+            storeFile file('../signing/heureux-qui-communique.keystore')
+            storePassword 'hqc-educs-cles'
+            keyAlias 'hqc'
+            keyPassword 'hqc-educs-cles'
+            storeType 'pkcs12'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.fixe
+        }
     }
 
     compileOptions {
