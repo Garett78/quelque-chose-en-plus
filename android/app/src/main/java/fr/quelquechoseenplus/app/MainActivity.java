@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
                     if (has(Manifest.permission.CAMERA)) launchCamera();
                     else requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA_PHOTO);
                 } else {
-                    launchGallery();
+                    launchPicker(params);
                 }
                 return true;
             }
@@ -214,13 +214,27 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void launchPicker(WebChromeClient.FileChooserParams params) {
+        String type = "image/*";
+        if (params != null && params.getAcceptTypes() != null) {
+            for (String t : params.getAcceptTypes()) {
+                if (t != null && !t.trim().isEmpty()) { type = t.trim(); break; }
+            }
+        }
+        openPicker(type);
+    }
+
     private void launchGallery() {
+        openPicker("image/*");
+    }
+
+    private void openPicker(String type) {
         cameraUri = null;
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
-        i.setType("image/*");
+        i.setType(type);
         try {
-            startActivityForResult(Intent.createChooser(i, "Choisir une image"), REQ_FILE);
+            startActivityForResult(Intent.createChooser(i, type.startsWith("audio") ? "Choisir un son" : "Choisir une image"), REQ_FILE);
         } catch (ActivityNotFoundException e) {
             if (fileCallback != null) fileCallback.onReceiveValue(null);
             fileCallback = null;
@@ -259,12 +273,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        String js = "(function(){"
-                + "var o=Array.prototype.slice.call(document.querySelectorAll('.overlay')).filter(function(x){return !x.hidden;});"
-                + "if(o.length){o[0].hidden=true;return 'stay';}"
-                + "var a=document.getElementById('ask');"
-                + "if(a&&!a.hidden){document.getElementById('btnBack').click();return 'stay';}"
-                + "return 'exit';})()";
+        String js = "(window.qcepBack ? window.qcepBack() : 'exit')";
         web.evaluateJavascript(js, value -> {
             if (value != null && value.contains("exit")) finish();
         });

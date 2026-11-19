@@ -1,9 +1,15 @@
 /* Garde l'application sur le téléphone pour qu'elle marche sans internet. */
-const VERSION = 'qcep-v2';
+const VERSION = 'qcep-v3';
 const FILES = [
   "./",
   "app.css",
-  "app.js",
+  "comm.js",
+  "core.js",
+  "games.js",
+  "index.html",
+  "learn.js",
+  "main.js",
+  "manifest.webmanifest",
   "fonts/atkinson-hyperlegible-latin-400-normal.woff2",
   "fonts/atkinson-hyperlegible-latin-700-normal.woff2",
   "icons/apple-180.png",
@@ -16,8 +22,6 @@ const FILES = [
   "images/manger.jpg",
   "images/repos.jpg",
   "images/toilettes.jpg",
-  "index.html",
-  "manifest.webmanifest",
   "mediapipe/face_mesh.binarypb",
   "mediapipe/face_mesh.js",
   "mediapipe/face_mesh_solution_packed_assets.data",
@@ -25,7 +29,7 @@ const FILES = [
   "mediapipe/face_mesh_solution_simd_wasm_bin.js",
   "mediapipe/face_mesh_solution_simd_wasm_bin.wasm",
   "mediapipe/face_mesh_solution_wasm_bin.js",
-  "mediapipe/face_mesh_solution_wasm_bin.wasm",
+  "mediapipe/face_mesh_solution_wasm_bin.wasm"
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

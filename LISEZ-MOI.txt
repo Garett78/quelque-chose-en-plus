@@ -1,11 +1,12 @@
 QUELQUE CHOSE EN PLUS
-Communication Oui / Non par le regard.
+Communication, jeux et apprentissages par le regard.
 
 Ce dossier contient :
-- l'application (index.html, app.js, app.css, images, icons, fonts, mediapipe)
+- l'application : index.html, app.css, core.js (regard, voix, sons), comm.js (Oui / Non),
+  games.js (oiseaux, bouteilles), learn.js (exercices), main.js, et les dossiers images, icons, fonts, mediapipe
 - android/ : le projet Android qui sert à fabriquer le fichier APK
 - .github/workflows/apk.yml : la recette que GitHub suit pour fabriquer l'APK automatiquement
 
-Pour changer une image par défaut : remplace le fichier du même nom dans le dossier images
+Pour changer une image par défaut de « Communiquer » : remplace le fichier du même nom dans le dossier images
 (toilettes.jpg, boire.jpg, manger.jpg, repos.jpg, change.jpg, cour.jpg) puis envoie-le sur GitHub.
 Un nouvel APK est fabriqué à chaque modification.
