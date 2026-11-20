@@ -10,8 +10,8 @@ android {
         applicationId 'fr.quelquechoseenplus.app'
         minSdk 24
         targetSdk 34
-        versionCode 4
-        versionName '3.1'
+        versionCode 5
+        versionName '3.2'
     }
 
     // Clé de signature fixe : chaque nouvelle version s'installe par-dessus la précédente.

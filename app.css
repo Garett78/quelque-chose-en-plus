@@ -147,8 +147,8 @@ h3{margin:8px 0 0;font-size:1.05rem;color:var(--accent);letter-spacing:.02em}
 .exoChoices{display:flex;align-items:center;justify-content:center;gap:clamp(24px,10vw,140px);width:100%}
 .exoChoices.three{gap:clamp(14px,4vw,60px)}
 .exoCard{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;padding:0;transition:transform .3s,opacity .4s}
-.exoCard .vis{display:block;width:min(36vw,52vh,340px);border-radius:16px;overflow:hidden;background:#fff}
-.exoChoices.three .vis{width:min(27vw,46vh,280px)}
+.exoCard .vis{display:block;width:min(42vw,52vh,340px);border-radius:16px;overflow:hidden;background:#fff}
+.exoChoices.three .vis{width:min(29vw,46vh,280px)}
 .exoChoices.one .vis{width:min(70vw,58vh,420px)}
 .exoCard .vis > *{border-radius:0}
 .exoCard .lbl{font-size:clamp(1.1rem,3.4vw,1.8rem);font-weight:700}
@@ -211,6 +211,13 @@ input[type=color]{width:90px;height:56px;border:1px solid var(--line);border-rad
 .tag.oui{background:var(--oui)}
 .tag.non{background:var(--non)}
 .recRow .btn.recording{background:var(--non);color:#fff}
+
+/* ---------- Familles d'exercices et groupes de questions ---------- */
+.famList{display:flex;flex-direction:column;gap:10px}
+.famTitle,.grpTitle{margin:10px 0 0;font-size:1.1rem;color:var(--accent)}
+.famList .tiles{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+#grid{display:flex;flex-direction:column;gap:10px}
+#grid .grpGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 
 /* ---------- Copyright et À propos ---------- */
 .credit{margin-top:auto;display:flex;justify-content:center;padding-top:8px}

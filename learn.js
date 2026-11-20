@@ -1,41 +1,65 @@
-/* Apprentissage : couleurs, formes, objets, fruits et légumes, vêtements.
+/* Apprentissage : 24 exercices (couleurs, formes et la bibliothèque de photos), rangés par familles.
    Mode Découverte (une image, la voix la nomme) et mode Exercice (2 ou 3 images, « Regarde la cuillère »). */
 'use strict';
 const SHAPE_COLOR = '#1f4fd1';
+const FAMILIES = [
+  {id:'bases', name:'Les bases'},
+  {id:'vie', name:'La vie quotidienne'},
+  {id:'alim', name:'L’alimentation'},
+  {id:'corps', name:'Le corps et les émotions'},
+  {id:'monde', name:'Le monde autour de moi'},
+  {id:'loisirs', name:'Les loisirs'}
+];
 const CATS = [
-  {id:'couleurs', name:'Les couleurs', kind:'color', items:[
+  {id:'couleurs', name:'Les couleurs', fam:'bases', kind:'color', items:[
     {id:'rouge', label:'rouge', art:'le', color:'#e3262b'},
     {id:'vert', label:'vert', art:'le', color:'#1f9d3a'},
     {id:'jaune', label:'jaune', art:'le', color:'#f7d117'},
     {id:'bleu', label:'bleu', art:'le', color:'#1f5fd1'}]},
-  {id:'formes', name:'Les formes', kind:'shape', items:[
+  {id:'formes', name:'Les formes', fam:'bases', kind:'shape', items:[
     {id:'rond', label:'rond', art:'le', shape:'circle'},
     {id:'carre', label:'carré', art:'le', shape:'square'},
     {id:'triangle', label:'triangle', art:'le', shape:'triangle'}]},
-  {id:'objets', name:'Les objets du quotidien', kind:'photo', items:[], hint:'cuillère, fourchette, couteau, table, brosse à dents…'},
-  {id:'fruits', name:'Les fruits et légumes', kind:'photo', items:[], hint:'pomme, banane, carotte, tomate…'},
-  {id:'vetf', name:'Les vêtements des filles', kind:'photo', items:[], hint:'robe, jupe, collant, chaussures…'},
-  {id:'vetg', name:'Les vêtements des garçons', kind:'photo', items:[], hint:'pantalon, pull, casquette, baskets…'}
+  ...LIB
 ];
-const Learn = {items: {}, cat: null, modes: {}, disc: 0, round: null, busyUntil: 0, nextTimer: null};
+const Learn = {items: {}, cat: null, modes: {}, disc: 0, round: null, busyUntil: 0, nextTimer: null, removed: new Set()};
 
+/* Charge les exercices. Les photos intégrées s'ajoutent aux images déjà ajoutées sur le téléphone, sans rien effacer. */
 async function loadLearn(){
+  Learn.removed = new Set(await Store.get('learnRemoved', []));
   for (const c of CATS){
-    const it = await Store.get('learn:' + c.id, null);
-    Learn.items[c.id] = it || c.items.map(x => ({...x}));
+    const stored = await Store.get('learn:' + c.id, null);
+    let items = stored || [];
+    for (const b of c.items) if (!items.some(x => x.id === b.id) && !Learn.removed.has(b.id)) items.push({...b});
+    Learn.items[c.id] = items;
+  }
+  /* Anciennes versions : « Vêtements des filles » et « Vêtements des garçons » sont réunis dans « Les vêtements ». */
+  if (!(await Store.get('learnMigr1', false))){
+    for (const old of ['vetf', 'vetg']){
+      const it = await Store.get('learn:' + old, null);
+      if (it && it.length) Learn.items.vetements.push(...it.filter(x => !Learn.items.vetements.some(y => y.id === x.id)));
+      await Store.del('learn:' + old);
+    }
+    await Store.set('learnMigr1', true);
+  }
+  for (const c of CATS){
     for (const x of Learn.items[c.id]) if (x.photo) await Photos.load(x.id);
+    await saveItems(c.id);
   }
 }
 const saveItems = id => Store.set('learn:' + id, Learn.items[id]);
 const catById = id => CATS.find(c => c.id === id);
 
 /* ---------------- Phrases ---------------- */
-const named = it => (it.art === "l'" ? "l'" : (it.art || 'le') + ' ') + it.label;
+/* Sans petit mot (les actions : « boire », « jouer »), la voix dit « Montre-moi : boire ». */
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const noArt = it => !it.art;
+const named = it => noArt(it) ? it.label : (it.art === "l'" ? "l'" : it.art + ' ') + it.label;
 const isPlural = it => it.art === 'les';
-const sayPrompt = it => 'Regarde ' + named(it);
-const sayBravo = it => 'Bravo ! ' + (isPlural(it) ? 'Ce sont ' : 'C’est ') + named(it);
-const sayShow = it => (isPlural(it) ? 'Regarde, ce sont ' : 'Regarde, c’est ') + named(it);
-const sayName = it => (isPlural(it) ? 'Ce sont ' : 'C’est ') + named(it);
+const sayPrompt = it => noArt(it) ? 'Montre-moi : ' + it.label : 'Regarde ' + named(it);
+const sayBravo = it => noArt(it) ? 'Bravo ! ' + cap(it.label) + ' !' : 'Bravo ! ' + (isPlural(it) ? 'Ce sont ' : 'C’est ') + named(it);
+const sayShow = it => noArt(it) ? 'Regarde, ça, c’est ' + it.label : (isPlural(it) ? 'Regarde, ce sont ' : 'Regarde, c’est ') + named(it);
+const sayName = it => noArt(it) ? cap(it.label) : (isPlural(it) ? 'Ce sont ' : 'C’est ') + named(it);
 
 /* ---------------- Image d'un élément ---------------- */
 function shapeSVG(shape){
@@ -46,7 +70,7 @@ function shapeSVG(shape){
   return `<svg viewBox="0 0 100 100" aria-hidden="true">${inner}</svg>`;
 }
 function itemVisual(it){
-  const src = it.photo ? Photos.url(it.id) : null;
+  const src = (it.photo ? Photos.url(it.id) : null) || it.img;
   if (src){ const i = document.createElement('img'); i.className = 'pic'; i.alt = ''; i.src = src; return i; }
   const d = document.createElement('div');
   if (it.color){ d.className = 'swatch'; d.style.background = it.color; return d; }
@@ -57,20 +81,26 @@ function itemVisual(it){
 /* ---------------- Menu Apprentissage ---------------- */
 function renderLearnTiles(){
   const t = $('#learnTiles'); t.innerHTML = '';
-  for (const c of CATS){
-    const items = Learn.items[c.id];
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'tile';
-    const art = document.createElement('span'); art.className = 'tileArt learnArt';
-    const shown = items.slice(0, c.kind === 'color' ? 4 : 3);
-    if (shown.length) shown.forEach(it => art.appendChild(itemVisual(it)));
-    else art.innerHTML = '<span class="emptyArt">+</span>';
-    b.appendChild(art);
-    const s = document.createElement('strong'); s.textContent = c.name; b.appendChild(s);
-    const sm = document.createElement('small');
-    sm.textContent = items.length ? items.length + (items.length > 1 ? ' images' : ' image') : 'Aucune image pour l’instant : ajoute tes photos';
-    b.appendChild(sm);
-    b.onclick = () => { Learn.cat = c; show('exo'); };
-    t.appendChild(b);
+  for (const f of FAMILIES){
+    const cats = CATS.filter(c => c.fam === f.id);
+    if (!cats.length) continue;
+    const h = document.createElement('h3'); h.className = 'famTitle'; h.textContent = f.name; t.appendChild(h);
+    const grid = document.createElement('div'); grid.className = 'tiles'; t.appendChild(grid);
+    for (const c of cats){
+      const items = Learn.items[c.id];
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tile';
+      const art = document.createElement('span'); art.className = 'tileArt learnArt';
+      const shown = items.slice(0, c.kind === 'color' ? 4 : 3);
+      if (shown.length) shown.forEach(it => art.appendChild(itemVisual(it)));
+      else art.innerHTML = '<span class="emptyArt">+</span>';
+      b.appendChild(art);
+      const s = document.createElement('strong'); s.textContent = c.name; b.appendChild(s);
+      const sm = document.createElement('small');
+      sm.textContent = items.length ? items.length + (items.length > 1 ? ' images' : ' image') : 'Aucune image pour l’instant : ajoute tes photos';
+      b.appendChild(sm);
+      b.onclick = () => { Learn.cat = c; show('exo'); };
+      grid.appendChild(b);
+    }
   }
 }
 Screens.learn = {enter: renderLearnTiles};
@@ -223,7 +253,7 @@ Screens.exoLib = {enter: renderExoLib};
 /* ---------------- Ajouter / modifier une image d'exercice ---------------- */
 let editItem = null, pendingItemPhoto = null;
 const isColorCat = () => Learn.cat.kind === 'color';
-const artValue = () => (document.querySelector('input[name="art"]:checked') || {}).value || 'le';
+const artValue = () => { const r = document.querySelector('input[name="art"]:checked'); return r ? r.value : 'le'; };
 function itemPreview(){
   const p = $('#itemPreview'); p.innerHTML = '';
   if (pendingItemPhoto){ const i = document.createElement('img'); i.className = 'pic'; i.alt = ''; i.src = URL.createObjectURL(pendingItemPhoto); p.appendChild(i); }
@@ -271,5 +301,6 @@ $('#itemDeleteNo').onclick = () => { $('#itemConfirm').hidden = true; };
 $('#itemDeleteYes').onclick = async () => {
   Learn.items[Learn.cat.id] = curItems().filter(x => x !== editItem);
   if (editItem.photo) await Photos.remove(editItem.id);
+  if (Learn.cat.items.some(b => b.id === editItem.id)){ Learn.removed.add(editItem.id); await Store.set('learnRemoved', [...Learn.removed]); }
   await saveItems(Learn.cat.id); closeOverlay('#itemSheet'); renderExoLib();
 };

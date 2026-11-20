@@ -11,12 +11,40 @@ const DEFAULT_CARDS = [
   {id:'repos', label:'Se reposer', q:'Tu veux te reposer ?', img:'images/repos.jpg'},
   {id:'change', label:'Change', q:'Tu veux qu’on te change ?', img:'images/change.jpg'},
   {id:'cour', label:'La cour', q:'Tu veux aller dans la cour ?', img:'images/cour.jpg'},
-  {id:'musique', label:'Musique', q:'Tu veux écouter de la musique ?', icon:'musique'}
+  {id:'musique', label:'Musique', q:'Tu veux écouter de la musique ?', icon:'musique'},
+  {id:'b_dents', label:'Se brosser les dents', q:'Tu veux te brosser les dents ?', img:'images/learn/besoins/se-brosser-les-dents.jpg', group:'besoins'},
+  {id:'b_laver', label:'Se laver', q:'Tu veux te laver ?', img:'images/learn/besoins/se-laver.jpg', group:'besoins'},
+  {id:'b_soins', label:'Soins', q:'Tu as besoin de soins ?', img:'images/learn/besoins/soins.jpg', group:'besoins'},
+  {id:'a_dormir', label:'Dormir', q:'Tu veux dormir ?', img:'images/learn/actions/dormir.jpg', group:'actions'},
+  {id:'a_jouer', label:'Jouer', q:'Tu veux jouer ?', img:'images/learn/actions/jouer.jpg', group:'actions'},
+  {id:'a_mains', label:'Se laver les mains', q:'Tu veux te laver les mains ?', img:'images/learn/actions/se-laver-les-mains.jpg', group:'actions'},
+  {id:'a_habiller', label:'S’habiller', q:'Tu veux t’habiller ?', img:'images/learn/actions/s-habiller.jpg', group:'actions'},
+  {id:'e_calme', label:'Calme', q:'Tu es calme ?', img:'images/learn/emotions/calme.jpg', group:'emotions'},
+  {id:'e_joie', label:'Joie', q:'Tu es de bonne humeur ?', img:'images/learn/emotions/joie.jpg', group:'emotions'},
+  {id:'e_tristesse', label:'Tristesse', q:'Tu es triste ?', img:'images/learn/emotions/tristesse.jpg', group:'emotions'},
+  {id:'e_colere', label:'Colère', q:'Tu es en colère ?', img:'images/learn/emotions/colere.jpg', group:'emotions'},
+  {id:'e_peur', label:'Peur', q:'Tu as peur ?', img:'images/learn/emotions/peur.jpg', group:'emotions'},
+  {id:'e_fatigue', label:'Fatigue', q:'Tu es fatigué ?', img:'images/learn/emotions/fatigue.jpg', group:'emotions'},
+  {id:'e_surprise', label:'Surprise', q:'Tu es étonné ?', img:'images/learn/emotions/surprise.jpg', group:'emotions'}
 ];
+const BASE_IDS = ['toilettes', 'boire', 'manger', 'repos', 'change', 'cour', 'musique'];
+const GROUPS = [
+  {id:'besoins', name:'Besoins et envies'},
+  {id:'actions', name:'Actions'},
+  {id:'emotions', name:'Émotions'},
+  {id:'autres', name:'Ajoutées par toi'}
+];
+const groupOf = c => c.group || (BASE_IDS.includes(c.id) ? 'besoins' : 'autres');
 const Comm = {cards: [], editing: false, current: null};
 
 async function loadComm(){
-  Comm.cards = await Store.get('cards', null) || DEFAULT_CARDS.map(c => ({...c}));
+  const stored = await Store.get('cards', null);
+  Comm.cards = stored || DEFAULT_CARDS.map(c => ({...c}));
+  /* Nouvelles questions (besoins, actions, émotions) ajoutées aux listes déjà enregistrées, sans rien effacer. */
+  if (stored && (await Store.get('cardsVersion', 1)) < 2){
+    for (const d of DEFAULT_CARDS) if (!Comm.cards.some(c => c.id === d.id)) Comm.cards.push({...d});
+  }
+  await Store.set('cardsVersion', 2); saveCards();
   for (const c of Comm.cards) if (c.photo) await Photos.load(c.id);
 }
 const saveCards = () => Store.set('cards', Comm.cards);
@@ -33,18 +61,26 @@ function cardVisual(c){
 function renderComm(){
   const g = $('#grid'); g.innerHTML = '';
   g.classList.toggle('editing', Comm.editing);
-  for (const c of Comm.cards){
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'card';
-    b.appendChild(cardVisual(c));
-    const s = document.createElement('span'); s.textContent = c.label; b.appendChild(s);
-    if (Comm.editing){ const p = document.createElement('span'); p.className = 'pen'; p.textContent = 'Modifier'; b.appendChild(p); }
-    b.onclick = () => Comm.editing ? openCard(c) : openAsk(c);
-    g.appendChild(b);
+  for (const grp of GROUPS){
+    const cards = Comm.cards.filter(c => groupOf(c) === grp.id);
+    if (!cards.length && grp.id !== 'autres') continue;
+    const h = document.createElement('h3'); h.className = 'grpTitle'; h.textContent = grp.name; g.appendChild(h);
+    const box = document.createElement('div'); box.className = 'grpGrid'; g.appendChild(box);
+    for (const c of cards){
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'card';
+      b.appendChild(cardVisual(c));
+      const s = document.createElement('span'); s.textContent = c.label; b.appendChild(s);
+      if (Comm.editing){ const p = document.createElement('span'); p.className = 'pen'; p.textContent = 'Modifier'; b.appendChild(p); }
+      b.onclick = () => Comm.editing ? openCard(c) : openAsk(c);
+      box.appendChild(b);
+    }
+    if (grp.id === 'autres'){
+      const a = document.createElement('button'); a.type = 'button'; a.className = 'card add';
+      a.innerHTML = '<span class="plus">+</span><span>Ajouter une image</span>';
+      a.onclick = () => openCard(null);
+      box.appendChild(a);
+    }
   }
-  const a = document.createElement('button'); a.type = 'button'; a.className = 'card add';
-  a.innerHTML = '<span class="plus">+</span><span>Ajouter une image</span>';
-  a.onclick = () => openCard(null);
-  g.appendChild(a);
   $('#btnEdit').textContent = Comm.editing ? 'Terminé' : 'Modifier';
   $('#editHint').hidden = !Comm.editing;
 }

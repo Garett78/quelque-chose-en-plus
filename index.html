@@ -130,7 +130,7 @@
     <button class="btn" type="button" data-back>← Accueil</button>
     <h2>Apprentissage</h2>
   </div>
-  <div class="tiles" id="learnTiles"></div>
+  <div class="famList" id="learnTiles"></div>
 </section>
 
 <!-- ============ APPRENTISSAGE : EXERCICE ============ -->
@@ -243,6 +243,7 @@
         <label><input type="radio" name="art" value="la"><span>la</span></label>
         <label><input type="radio" name="art" value="l'"><span>l'</span></label>
         <label><input type="radio" name="art" value="les"><span>les</span></label>
+        <label><input type="radio" name="art" value=""><span>aucun</span></label>
       </div>
       <small id="artPreview"></small>
     </div>
@@ -373,7 +374,7 @@
     <h2>Heureux Qui Communique</h2>
     <p>Communication Oui / Non, jeux et apprentissages par le regard, pour les jeunes polyhandicapés.</p>
     <p class="aboutBy">Conçue par <strong>Nawafale REZGUI</strong><br>Éducs Clés Formations</p>
-    <p class="aboutCopy">© 2026 Nawafale REZGUI – Éducs Clés Formations. Tous droits réservés.<br>Version 3.1</p>
+    <p class="aboutCopy">© 2026 Nawafale REZGUI – Éducs Clés Formations. Tous droits réservés.<br>Version 3.2</p>
     <details>
       <summary>Outils libres utilisés</summary>
       <p>Suivi du regard : MediaPipe Face Mesh, © Google, licence Apache 2.0.<br>
@@ -389,6 +390,7 @@
 
 <script src="mediapipe/face_mesh.js"></script>
 <script src="core.js"></script>
+<script src="learn-data.js"></script>
 <script src="comm.js"></script>
 <script src="games.js"></script>
 <script src="learn.js"></script>

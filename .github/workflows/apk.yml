@@ -26,7 +26,7 @@ jobs:
       - name: Copier l'application dans le projet Android
         run: |
           mkdir -p android/app/src/main/assets/www
-          cp -r index.html app.css core.js comm.js games.js learn.js main.js manifest.webmanifest images icons fonts mediapipe android/app/src/main/assets/www/
+          cp -r index.html app.css core.js learn-data.js comm.js games.js learn.js main.js manifest.webmanifest images icons fonts mediapipe android/app/src/main/assets/www/
 
       - name: Fabriquer l'APK
         run: gradle -p android assembleDebug --no-daemon
